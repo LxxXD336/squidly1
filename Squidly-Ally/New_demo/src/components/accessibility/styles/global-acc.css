@@ -1,0 +1,71 @@
+/* ===== Emphasize Links (global) ===== */
+html[data-emphasize-links="1"] a:where(:not([role="button"])) {
+    text-decoration: underline !important;
+    text-decoration-thickness: .12em;
+    text-underline-offset: 2px;
+    /* 柔和的内阴影高亮，避免刺眼的纯底色块 */
+    box-shadow: 0 -2px 0 0 rgba(157,223,255,.35) inset;
+}
+
+/* 悬停/按下更明显一些 */
+html[data-emphasize-links="1"] a:hover,
+html[data-emphasize-links="1"] a:active {
+    box-shadow: 0 -4px 0 0 rgba(157,223,255,.45) inset;
+}
+
+/* 焦点清晰 */
+html[data-emphasize-links="1"] a:focus-visible {
+    outline: 2px solid #7c3aed;
+    outline-offset: 2px;
+}
+
+/* 避免无障碍面板自身也被高亮（可按需保留/删除） */
+[data-acc-ui] a {
+    text-decoration: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+/* =========================
+   Accessibility Cursor Sizes
+   Requires:
+   html[data-acc-cursor="1"]
+   html[data-acc-cursor-size="small|medium|large"]
+   ========================= */
+
+:root {
+    /* 黑色箭头 + 白色描边，避免在深色背景上看不见 */
+    --acc-cursor-small: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 32 32'><path d='M4 2 L4 26 L10 20 L14 30 L18 28 L14 18 L22 18 Z' fill='%23000000' stroke='%23ffffff' stroke-width='2'/></svg>");
+    --acc-cursor-medium: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><path d='M4 2 L4 26 L10 20 L14 30 L18 28 L14 18 L22 18 Z' fill='%23000000' stroke='%23ffffff' stroke-width='2'/></svg>");
+    --acc-cursor-large: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 32 32'><path d='M4 2 L4 26 L10 20 L14 30 L18 28 L14 18 L22 18 Z' fill='%23000000' stroke='%23ffffff' stroke-width='2'/></svg>");
+}
+
+/* 开启 cursor 功能才生效 */
+html[data-acc-cursor="1"][data-acc-cursor-size="small"] * {
+    cursor: var(--acc-cursor-small) 4 2, auto !important;
+}
+
+html[data-acc-cursor="1"][data-acc-cursor-size="medium"] * {
+    cursor: var(--acc-cursor-medium) 5 3, auto !important;
+}
+
+html[data-acc-cursor="1"][data-acc-cursor-size="large"] * {
+    cursor: var(--acc-cursor-large) 6 4, auto !important;
+}
+
+/* 可选：让可点击元素依然体现“可点”的感觉（但仍使用大光标） */
+html[data-acc-cursor="1"] a,
+html[data-acc-cursor="1"] button,
+html[data-acc-cursor="1"] [role="button"] {
+    cursor: inherit !important;
+}
+
+
+/* Hide scrollbar globally for elements using .scrollbar-hide */
+.scrollbar-hide {
+  -ms-overflow-style: none;   /* IE & Edge */
+  scrollbar-width: none;      /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;              /* Chrome / Safari */
+}

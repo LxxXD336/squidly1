@@ -1,0 +1,40 @@
+/* 1) 启用 Tailwind v4（零配置） */
+@import "tailwindcss";
+
+/* 2) 可选：占满视口，方便 Hero 撑开高度 */
+html, body, #root { height: 100%; }
+/* 显示用字体 */
+.display-font {
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+/* 3) 取消 Vite 模板的强制居中、深浅色强绑定等（保持空即可） */
+/* 不要再写 body { display:flex; place-items:center; } 那些 */
+/* 1) 高级感多彩渐变（紫→玫红→青） */
+.gradient-text {
+  background-image: linear-gradient(90deg, #a78bfa, #f472b6 45%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 2) 可选：轻微流动的渐变（更炫） */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.gradient-animated {
+  background-size: 200% 100%;
+  animation: gradient-shift 8s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gradient-animated { animation: none; }
+}
+
+/* 让标题更显眼：轻微发光 + 阴影 */
+.title-glow {
+  text-shadow:
+    0 12px 32px rgba(140, 82, 255, .28),
+    0 3px 8px rgba(0,0,0,.10);
+}
