@@ -421,27 +421,25 @@ export default function ImageCompareSection(): JSX.Element {
           </button>
         </div>
 
-        {/* 底部胶囊指示条：点击即居中 */}
-        <div className="mt-5 flex items-center justify-center">
-          <div className="flex items-center gap-3 rounded-full bg-slate-50 px-5 py-2 shadow-sm ring-1 ring-black/5">
-            {STEPS.map((_, i) => (
+        {/* 底部指示器（与 MoreFeaturesSection 风格一致） */}
+        <div className="mt-8 flex justify-center gap-3">
+          {STEPS.map((_, i) => {
+            const isActive = i === index;
+            return (
               <button
                 key={i}
-                onClick={() => centerCard(i)}
+                type="button"
                 aria-label={`Go to card ${i + 1}`}
-                className="relative h-4 w-8"
-                title={`Card ${i + 1}`}
-              >
-                <span
-                  className={[
-                    "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all",
-                    i === index ? "h-1.5 w-8 bg-slate-400 rounded-full" : "h-3 w-3 bg-slate-400",
-                  ].join(" ")}
-                />
-              </button>
-            ))}
-          </div>
+                onClick={() => centerCard(i)}
+                className={`
+                  h-3 rounded-full transition-all duration-300
+                  ${isActive ? "w-7 bg-slate-900" : "w-3 bg-slate-400/40"}
+                `}
+              />
+            );
+          })}
         </div>
+
       </div>
     </section>
   );
