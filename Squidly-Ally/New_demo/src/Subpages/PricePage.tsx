@@ -32,7 +32,7 @@ function GlassButton({
                 onClick={onClick}
                 className={[
                     'group relative w-full rounded-full px-5 py-3 text-[15px] font-semibold active:scale-[0.98] transition',
-                    variant === 'dark' ? 'text-[#6F57FF]' : 'text-[#1A1E27]',
+                    variant === 'dark' ? 'text-white' : 'text-[#1A1E27]',
                     className,
                 ].join(' ')}
                 style={
