@@ -1,5 +1,6 @@
 // src/components/FooterInfoSection.tsx
 import { Linkedin } from "lucide-react";
+import aicpa from "../Photo/privacy.png";
 
 export default function FooterInfoSection() {
   const year = new Date().getFullYear();
@@ -33,8 +34,15 @@ export default function FooterInfoSection() {
               contact@squidly.com.au
             </a>
             <p className="mt-8 text-xs text-slate-600">© {year} Made by Squidly</p>
+            {/* Privacy / Compliance Logos */}
+            <div className="mt-5 h-16 w-[320px]">
+              <img
+                src={aicpa}
+                alt="Privacy / Compliance"
+                className="h-full w-full object-contain object-center opacity-100"
+              />
+            </div>
           </div>
-
           {/* 2) Legal */}
           <div>
             <div className="font-semibold">Legal</div>
