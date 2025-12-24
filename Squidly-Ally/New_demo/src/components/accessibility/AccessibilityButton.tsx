@@ -287,11 +287,30 @@ export default function AccessibilityButton() {
                     data-acc-ui
                     aria-label="Accessibility options"
                     onClick={() => setOpen(true)}
-                    className="fixed z-[10000] bottom-5 right-5 md:bottom-6 md:right-6 rounded-full shadow-lg bg-white backdrop-blur border border-slate-300 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-violet-300 p-[12px] md:p-[14px] text-violet-700"
-                    style={{ fontSize: 14 }}
+                    className="fixed z-[10000] bottom-5 right-5 md:bottom-6 md:right-6 rounded-full shadow-lg bg-white backdrop-blur border border-slate-300 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-violet-300 p-[12px] md:p-[14px] text-violet-700 flex items-center justify-center"
                 >
-                    <span aria-hidden className="text-[18px] leading-none"></span>
+                    <svg
+                        aria-hidden="true"
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
+                        {/* head */}
+                        <circle cx="12" cy="5" r="2" />
+                        {/* arms */}
+                        <path d="M5 11l7-3 7 3" />
+                        {/* body */}
+                        <path d="M12 8v6" />
+                        {/* legs */}
+                        <path d="M9 22l3-8 3 8" />
+                    </svg>
                 </button>
+
 
                 <div data-acc-ui className="acc-lens-mask fixed inset-0 pointer-events-none z-[9998]" aria-hidden="true" />
 
