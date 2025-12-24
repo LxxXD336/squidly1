@@ -57,7 +57,7 @@ export default function NavBar() {
                                     `transition-colors ${isActive ? 'text-[#6F57FF] font-semibold' : ''}`
                                 }
                             >
-                                Product
+                                Support
                             </NavLink>
                         </nav>
 
