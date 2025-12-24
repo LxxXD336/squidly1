@@ -66,7 +66,7 @@ export default function NavBar() {
                             href="/#book"
                             className="rounded-full bg-[#BFD2FF] text-[#1e40af] px-5 h-10 inline-grid place-items-center font-semibold"
                         >
-                            Book a call
+                            Sign in
                         </a>
                     </div>
                 </div>
