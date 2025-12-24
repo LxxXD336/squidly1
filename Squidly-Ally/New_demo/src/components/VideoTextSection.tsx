@@ -80,33 +80,72 @@ export function ControlChipButton({
 }
 
 export default function VideoTextSection() {
+  const lines = [
+    { text: "Interviews.", src: "https://www.w3schools.com/html/mov_bbb.mp4" },
+    { text: "Sales calls.", src: "https://www.w3schools.com/html/mov_bbb.mp4" },
+    { text: "Homework. Meetings.", src: "https://www.w3schools.com/html/mov_bbb.mp4" },
+    { text: "Really everything.", src: "https://www.w3schools.com/html/mov_bbb.mp4" },
+  ] as const;
+
+  // 把所有词“拍平”成一个全局序列
+  const flat = React.useMemo(() => {
+    const out: Array<{ key: string; lineIdx: number; wordIdx: number }> = [];
+    lines.forEach((ln, li) => {
+      ln.text
+        .trim()
+        .split(" ")
+        .filter(Boolean)
+        .forEach((_, wi) => out.push({ key: `${li}-${wi}`, lineIdx: li, wordIdx: wi }));
+    });
+    return out;
+  }, [lines]);
+
+  const [autoIndex, setAutoIndex] = React.useState(0);
+  const [hoverKey, setHoverKey] = React.useState<string | null>(null);
+
+  // 当前真正激活的词：hover 优先，否则用自动轮播
+  const activeKey = hoverKey ?? flat[autoIndex]?.key ?? "0-0";
+
+  React.useEffect(() => {
+    if (hoverKey) return; // hover 时暂停自动轮播
+    if (flat.length <= 1) return;
+
+    const id = window.setInterval(() => {
+      setAutoIndex((i) => (i + 1) % flat.length);
+    }, 3000);
+
+    return () => window.clearInterval(id);
+  }, [hoverKey, flat.length]);
+
   return (
-    <section
-      className="relative isolate overflow-hidden"
-      aria-label="Cheat hero with video-filled headline"
-    >
-      {/* soft vignette */}
-      
-
+    <section className="relative isolate overflow-hidden" aria-label="Cheat hero with video-filled headline">
       <div className="mx-auto max-w-[1200px] px-6 py-20 sm:py-24 md:py-28">
-
         <h1 className="leading-[0.85] tracking-tight">
-          {/* line 1 (muted) */}
-          <HoverVideoWords className="mt-0" text="Interviews." src="https://www.w3schools.com/html/mov_bbb.mp4" scale={1.12} />
-
-          {/* line 2 (video-masked) */}
-          <HoverVideoWords className="mt-2" text="Sales calls." src="https://www.w3schools.com/html/mov_bbb.mp4" scale={1.12} />
-
-          {/* line 3 (muted) */}
-          <HoverVideoWords className="mt-2" text="Homework. Meetings." src="https://www.w3schools.com/html/mov_bbb.mp4" scale={1.12} />
-
-          {/* line 4 (muted) */}
-          <HoverVideoWords className="mt-2" text="Really everything." src="https://www.w3schools.com/html/mov_bbb.mp4" scale={1.12} />
+          {lines.map((ln, li) => (
+            <HoverVideoWords
+              key={li}
+              className={li === 0 ? "mt-0" : "mt-2"}
+              text={ln.text}
+              src={ln.src}
+              scale={1.12}
+              // ✅ 关键：由父组件统一控制当前激活词
+              activeKey={activeKey}
+              lineIdx={li}
+              onHoverStart={(k) => setHoverKey(k)}
+              onHoverEnd={() => setHoverKey(null)}
+              // 可选：hover 离开后从 hover 的词继续播（更顺滑）
+              onCommitHoverToAuto={(k) => {
+                const idx = flat.findIndex((x) => x.key === k);
+                if (idx >= 0) setAutoIndex(idx);
+              }}
+            />
+          ))}
         </h1>
       </div>
     </section>
   );
 }
+
 
 /**
  * VideoMaskedText – renders a full-width line of text with video showing
@@ -179,42 +218,130 @@ export function VideoMaskedText({
  * HoverVideoWords – make every word reveal the video and slightly scale up
  * on hover. Use it for any line of text.
  */
-export function HoverVideoWords({ text, src, className = "", scale = 1.04 }: { text: string; src: string; className?: string; scale?: number; }) {
-  const words = text.trim().split(' ');
+
+export function HoverVideoWords({
+  text,
+  src,
+  className = "",
+  scale = 1.04,
+  activeKey,
+  lineIdx,
+  onHoverStart,
+  onHoverEnd,
+  onCommitHoverToAuto,
+}: {
+  text: string;
+  src: string;
+  className?: string;
+  scale?: number;
+
+  // ✅ 新增：由父级传入的全局激活 key（例如 "2-1" 表示第3行第2个词）
+  activeKey: string;
+  lineIdx: number;
+
+  onHoverStart: (key: string) => void;
+  onHoverEnd: () => void;
+
+  // 可选：让自动播放离开 hover 后从 hover 的词继续
+  onCommitHoverToAuto?: (key: string) => void;
+}) {
+  const words = text.trim().split(" ").filter(Boolean);
+
   return (
     <div className={`relative ${className}`}>
-      {words.map((w, i) => (
-        <React.Fragment key={i}>
-          <HoverWord text={w} src={src} scale={scale} />
-          {i < words.length - 1 ? <span>&nbsp;</span> : null}
-        </React.Fragment>
-      ))}
+      {words.map((w, wi) => {
+        const key = `${lineIdx}-${wi}`;
+        const active = key === activeKey;
+
+        return (
+          <React.Fragment key={key}>
+            <HoverableWord
+              text={w}
+              src={src}
+              active={active}
+              scale={scale}
+              onEnter={() => onHoverStart(key)}
+              onLeave={() => {
+                onHoverEnd();
+                // 想要 hover 离开从 hover 词继续自动播放，就保留这行：
+                onCommitHoverToAuto?.(key);
+              }}
+            />
+            {wi < words.length - 1 ? <span>&nbsp;</span> : null}
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 }
 
-function HoverWord({ text, src, scale = 1.04 }: { text: string; src: string; scale?: number; }) {
+
+function HoverableWord({
+  text,
+  src,
+  active,
+  onEnter,
+  onLeave,
+  scale = 1.04,
+}: {
+  text: string;
+  src: string;
+  active: boolean;
+  onEnter: () => void;
+  onLeave: () => void;
+  scale?: number;
+}) {
   const maskId = useId().replace(/:/g, "");
+
   return (
-    <span className="group/word relative inline-block align-baseline transition-[font-size] duration-200 [--scale:1] hover:[--scale:var(--hover)]" style={{ ['--base' as any]: 'clamp(2.5rem, 9vw, 7.2rem)', ['--hover' as any]: String(scale), fontSize: 'calc(var(--base) * var(--scale))', transformOrigin: 'bottom left' }}>
+    <span
+      className="group/word relative inline-block align-baseline transition-[font-size] duration-200"
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      style={{
+        ["--base" as any]: "clamp(2.5rem, 9vw, 7.2rem)",
+        ["--hover" as any]: String(scale),
+        fontSize: active ? "calc(var(--base) * var(--hover))" : "var(--base)",
+        transformOrigin: "bottom left",
+      }}
+    >
       {/* base gray word */}
-      <span className="relative z-0 block font-extrabold leading-[0.85] text-slate-400/60 transition-colors duration-200 group-hover/word:text-transparent">{text}</span>
-      {/* video overlay */}
-      <span className="pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-200 group-hover/word:opacity-100">
-        <svg className="block h-full w-full" aria-hidden style={{ fontSize: '1em' }}>
-          <defs>
-            <mask id={`${maskId}-mask`} maskUnits="userSpaceOnUse">
-              <rect width="100%" height="100%" fill="black" />
-              <text x="0" y="0.78em" fill="white" fontWeight="900" fontFamily="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial">{text}</text>
-            </mask>
-          </defs>
-          <foreignObject x="0" y="0" width="100%" height="100%" mask={`url(#${maskId}-mask)`}>
-            <div className="h-full w-full">
-              <video src={src} autoPlay muted loop playsInline className="h-full w-full object-cover" />
-            </div>
-          </foreignObject>
-        </svg>
+      <span
+        className={[
+          "relative z-0 block font-extrabold leading-[0.85] transition-colors duration-200",
+          active ? "text-transparent" : "text-slate-400/60",
+        ].join(" ")}
+      >
+        {text}
       </span>
+
+      {/* video overlay：active 时显示（hover 或自动都走 active） */}
+      {active && (
+        <span className="pointer-events-none absolute inset-0 z-10 opacity-100 transition-opacity duration-200">
+          <svg className="block h-full w-full" aria-hidden style={{ fontSize: "1em" }}>
+            <defs>
+              <mask id={`${maskId}-mask`} maskUnits="userSpaceOnUse">
+                <rect width="100%" height="100%" fill="black" />
+                <text
+                  x="0"
+                  y="0.78em"
+                  fill="white"
+                  fontWeight="900"
+                  fontFamily="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial"
+                >
+                  {text}
+                </text>
+              </mask>
+            </defs>
+            <foreignObject x="0" y="0" width="100%" height="100%" mask={`url(#${maskId}-mask)`}>
+              <div className="h-full w-full">
+                <video src={src} autoPlay muted loop playsInline className="h-full w-full object-cover" />
+              </div>
+            </foreignObject>
+          </svg>
+        </span>
+      )}
     </span>
   );
 }
+
