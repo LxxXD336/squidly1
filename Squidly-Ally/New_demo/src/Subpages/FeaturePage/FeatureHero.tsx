@@ -1,5 +1,5 @@
 import React from "react";
-import featureGrid from "../../Photo/featurehero.png";
+import featureGrid from "../../Photo/b.png";
 
 export const FeatureHero: React.FC = () => {
   return (
@@ -69,15 +69,12 @@ export const FeatureHero: React.FC = () => {
         </div>
 
         {/* 右侧图片区域 */}
-        <div className="relative w-full max-w-md">
-          {/* 去掉多余边框，只保留简单卡片，贴合原图感觉 */}
-          <div className="rounded-[2.25rem] bg-white/80 p-4 shadow-xl shadow-slate-400/20 backdrop-blur-xl">
-            <img
+        <div className="relative w-full max-w-xl">
+          <img
               src={featureGrid}
-              alt="Feature tiles"
-              className="w-full rounded-2xl shadow-md"
-            />
-          </div>
+              alt=""
+              className="w-full h-auto"
+          />
         </div>
       </div>
     </section>
