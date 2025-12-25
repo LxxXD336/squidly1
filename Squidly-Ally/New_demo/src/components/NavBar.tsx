@@ -64,10 +64,11 @@ export default function NavBar() {
                         {/* CTA */}
                         <a
                             href="/#book"
-                            className="rounded-full bg-[#BFD2FF] text-[#1e40af] px-5 h-10 inline-grid place-items-center font-semibold"
+                            className="rounded-full bg-[#A087DD] text-white px-5 h-10 inline-grid place-items-center font-semibold hover:opacity-90 transition"
                         >
                             Sign in
                         </a>
+
                     </div>
                 </div>
             </div>
